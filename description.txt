@@ -1,0 +1,1 @@
+Adds server and player email confirmation to add an extra layer of security.

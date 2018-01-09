@@ -92,7 +92,6 @@ local function send_request(request_type, player, context)
 	end
 	do_wait(player, context)
 	-- perform the request
-	print("POST:", request_type, reg_id, dump(context))
 	http.fetch({
 		url = reg_api,
 		post_data = minetest.write_json({
@@ -106,7 +105,6 @@ local function send_request(request_type, player, context)
 		timeout = 15,
 	}, function(res)
 		assert(res.completed)
-		print(request_type, dump(res))
 		if not res.succeeded then
 			-- major problem, retry
 			minetest.log("error", "mt2fa: server replied with an error code")
@@ -415,7 +413,6 @@ local function do_updates(first)
 		timeout = 15,
 	}, function(res)
 		assert(res.completed)
-		print(dump(res))
 		if not res.succeeded then
 			-- major problem, retry
 			minetest.log("error", "mt2fa: server replied with an error code")

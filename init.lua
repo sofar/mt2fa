@@ -84,6 +84,14 @@ local function do_msg(player, context)
 		end)
 end
 
+local function do_allow(name)
+	logins[name] = nil
+	if privs[name] then
+		minetest.set_player_privs(name, privs[name])
+		privs[name] = nil
+	end
+end
+
 local function send_request(request_type, player, context)
 	minetest.log("action", "mt2fa: sending " .. request_type .. " for " .. player:get_player_name())
 	-- initial player message may be needed
@@ -233,8 +241,12 @@ local function send_request(request_type, player, context)
 				if data.auth_required == "1" then
 					-- do auth
 					send_request("AUTH", player, context)
+				else
+					local name = player:get_player_name()
+					minetest.close_formspec(player:get_player_name(), "")
+					minetest.chat_send_player(name, context.message)
+					do_allow(name)
 				end
-				do_msg(player, context) -- maybe just a chat msg here?
 			else
 				do_msg(player, context)
 			end
@@ -251,10 +263,7 @@ local function send_request(request_type, player, context)
 				local name = player:get_player_name()
 				minetest.close_formspec(player:get_player_name(), "")
 				minetest.chat_send_player(name, context.message)
-				-- mark successful
-				minetest.set_player_privs(name, privs[name])
-				logins[name] = nil
-				privs[name] = nil
+				do_allow(name)
 			elseif data.result == "AUTHPEND" then
 				minetest.after(10, send_request, "AUTHSTAT", player, context)
 			else
@@ -325,21 +334,27 @@ minetest.register_on_joinplayer(function(player)
 					})
 				end
 			)
-		else
-			-- already registered
+		elseif player:get_attribute("mt2fa.auth_required") == "1" then
+			-- already registered, must auth
 			send_request("AUTH", player, {required = true})
+		else
+			-- maybe-auth if server asks for it
+			send_request("ACCT", player, {})
 		end
 	else
 		-- offer to register
 		fsc.show(name, forms.register, {required = false},
 			function(p, fields, c)
 				if not fields.register then
+					-- if the user opts out, return privs
+					do_allow(name)
 					return true
 				end
 				-- ask for email
 				fsc.show(name, forms.email, c,
 					function(pl, f, co)
 						if not f.email then
+							do_allow(name)
 							return
 						end
 						send_request("REG", pl, {email = f.email})
@@ -347,30 +362,11 @@ minetest.register_on_joinplayer(function(player)
 				)
 				return true
 			end)
-
-		if req_auth then
-			if reg == "1" then
-				-- authentication must be performed
-				send_request("AUTH", player, {required = true})
-			end
-		else
-			if reg == "1" then
-				-- check if the user account on the server has
-				-- been marked as `require 2fa authentication`
-				send_request("ACCT", player, {})
-			end
-		end
 	end
 end)
 
 minetest.register_on_leaveplayer(function(player)
-	-- cleanup stuff
-	local name = player:get_player_name()
-	logins[name] = nil
-	if privs[name] then
-		minetest.set_player_privs(name, privs[name])
-		privs[name] = nil
-	end
+	do_allow(player:get_player_name())
 end)
 
 local function do_grace()

@@ -1,0 +1,38 @@
+
+#
+# mt2fa settingtypes.txt
+#
+
+# This file contains a key and explanation for all the relevant
+# minetest.conf settings that the mt2fa mod uses to operate.
+
+#    Require registration in the mt2fa mod. This will force players
+#    to provide their email address and confirm the email address
+#    with the mt2fa service before they may play.
+mt2fa.require_registration (Require MT2FA registration) bool false
+
+#    Require authentication in the mt2fa mod. This will force players
+#    to authenticate with the mt2fa service, and therefore force them
+#    to be registered with the mt2fa service, before they may play.
+mt2fa.require_authentication (Require MT2FA authentication) bool false
+
+#    Location (URL) of the mt2fa service. The default value is a public
+#    instance that may be used by anyone.
+mt2fa.api_server (MT2FA API URL) string https://mt2fa.foo-projects.org/mt2fa
+
+#    Your server ID as it is known to the mt2fa service. You receive
+#    this ID when you register your server. If you want to move your
+#    server, you should make sure to also move this Server ID over to
+#    the new location.
+mt2fa.server_id (MT2FA Server ID) string
+
+#    How long players have to register or authenticate, if they are
+#    required to register or authenticate. If you set this too short,
+#    it's likely that they might not be able to perform the action
+#    in time.
+mt2fa.grace (MT2FA Grace Time) int 300
+
+#    Which privileges should the player be granted when they register.
+#    The value should be a comma-separated list. (e.g. "interact,fly")
+mt2fa.registration_grants (MT2FA registration grants) string
+

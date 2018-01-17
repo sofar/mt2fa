@@ -205,7 +205,13 @@ local function send_request(request_type, player, context)
 				-- signal success to the player
 				S:set("mt2fa.server_id", data.data.Server_id)
 				reg_id = data.data.Server_id
+				minetest.log("action", "Your server id is: " .. reg_id ..
+					". It will be written to your minetest.conf variable." ..
+					" Please make note of it in case you want to move your server.")
 				do_msg(player, context)
+				minetest.chat_send_player(player:get_player_name(), "Your server id is: " .. reg_id ..
+					". It will be written to your minetest.conf variable. " ..
+					"Please make note of it in case you want to move your server.")
 			elseif data.result == "SERVERPEND" then
 				minetest.after(10, send_request, "SERVERSTAT", player, context)
 				do_wait(player, context)

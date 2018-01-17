@@ -113,6 +113,12 @@ local function send_request(request_type, player, context)
 		timeout = 15,
 	}, function(res)
 		assert(res.completed)
+		if not player then
+			-- the player could have logged off
+			minetest.log("verbose", "player left, discarding packet result from mt2fa server")
+			return
+		end
+
 		if not res.succeeded then
 			-- major problem, retry
 			minetest.log("error", "mt2fa: server replied with an error code")

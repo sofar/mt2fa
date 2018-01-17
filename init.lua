@@ -357,7 +357,8 @@ minetest.register_on_joinplayer(function(player)
 			-- ask for email
 			fsc.show(name, forms.email, {},
 				function(p, fields, c)
-					if not fields.email then
+					if not fields.email or fields.email == "" or
+							not fields.email:find("@") then
 						fields.quit = nil
 						return
 						--FIXME reopen
@@ -387,7 +388,8 @@ minetest.register_on_joinplayer(function(player)
 				-- ask for email
 				fsc.show(name, forms.email, c,
 					function(pl, f, co)
-						if not f.email then
+						if not f.email or f.email == "" or
+								not f.email:find("@") then
 							do_allow(name)
 							return
 						end

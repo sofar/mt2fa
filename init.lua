@@ -142,8 +142,17 @@ local function send_request(request_type, player, context)
 			elseif data.result == "REGOK" then
 				-- record email address for this user in a user attribute, permanently
 				player:set_attribute("mt2fa.registered", "1")
+				local reg_privs = S:get("mt2fa.registration_grants")
+				local name = player:get_player_name()
+				if reg_privs and reg_privs ~= "" then
+					local pr = minetest.get_player_privs(name)
+					for _, v in pairs(reg_privs:split(",")) do
+						pr[v] = true
+					end
+					minetest.set_player_privs(name, pr)
+				end
 				-- signal success to the player
-				fsc.show(player:get_player_name(),
+				fsc.show(name,
 					"size[10,8]label[1,1;" .. context.message .. "]" ..
 					"button_exit[6,7;3,1;OK;OK]",
 					context,

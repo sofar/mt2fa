@@ -93,6 +93,19 @@ local function do_allow(name)
 end
 
 local function send_request(request_type, player, context)
+	-- rate limiting code
+	if not context.count then
+		context.count = 1
+	else
+		context.count = context.count + 1
+		if context.count >= 60 then
+			-- stop causing more packets to the server when it's not going to succeed.
+			context.message = "Error: too many packets sent to server. If you're " ..
+				"not logged in or authenticated by now, something has gone wrong badly."
+			do_msg(player, context)
+			return
+		end
+	end
 	minetest.log("action", "mt2fa: sending " .. request_type .. " for " .. player:get_player_name())
 	-- initial player message may be needed
 	if message[request_type] then

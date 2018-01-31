@@ -58,6 +58,11 @@ These commands require the `server` privilege.
   How long (seconds) a player can take to perform required authentication
   and/or registration.
 
+  `mt2fa.registration_grants` string nil
+
+  Privileges that are granted to players that have successfully registered.
+  Should be a string value separated by commas, without spaces.
+
 ## player attributes
 
   `mt2fa.registered int nil`

@@ -37,7 +37,11 @@ local forms = {
 		"Please type your email address. You will need to be\n" ..
 		"able to receive email and click on a link that is sent\n" ..
 		"to you at the address. If you lose the email address,\n" ..
-		"you may lose all access to this server.]" ..
+		"you may lose all access to this server. You can find the\n" ..
+		"privacy policy here: mt2fa.foo-projects.org/privacy.html\n" ..
+		"By providing your email address, you consent to its use\n" ..
+		"for the purpose of providing you this service.\n" ..
+		"]" ..
 		"button_exit[6,7;3,1;OK;OK]"..
 		"field[1,6;8,1;email;email address;]",
 
